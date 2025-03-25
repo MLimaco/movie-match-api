@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "csv-parser": "^3.2.0"
+  },
+  "name": "movie-match-api",
+  "version": "1.0.0",
+  "main": "movie.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "search": "node movie.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
