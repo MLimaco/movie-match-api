@@ -1,14 +1,17 @@
 {
   "dependencies": {
     "csv-parser": "^3.2.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "nodemon": "^3.1.9"
   },
   "name": "movie-match-api",
   "version": "1.0.0",
   "main": "movie.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "search": "node movie.js"
+    "search": "node movie.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
