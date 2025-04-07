@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Movie Match API
+  version: 1.0.0
+  description: API para gestionar y buscar películas.
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+paths:
+  /:
+    get:
+      summary: Obtiene una película aleatoria.
+      responses:
+        200:
+          description: Película aleatoria obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  year:
+                    type: string
+                  genre:
+                    type: string
+                  director:
+                    type: string
+                  synopsis:
+                    type: string
+  /movies:
+    get:
+      summary: Obtiene todas las películas o filtra por criterios.
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Nombre parcial de la película.
+        - in: query
+          name: year
+          schema:
+            type: string
+          description: Año de la película.
+      responses:
+        200:
+          description: Lista de películas obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    year:
+                      type: string
+                    genre:
+                      type: string
+                    director:
+                      type: string
+                    synopsis:
+                      type: string
+  /movies/{idOrName}:
+    get:
+      summary: Busca una película por ID o nombre.
+      parameters:
+        - in: path
+          name: idOrName
+          required: true
+          schema:
+            type: string
+          description: ID o nombre de la película.
+      responses:
+        200:
+          description: Película encontrada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  year:
+                    type: string
+                  genre:
+                    type: string
+                  director:
+                    type: string
+                  synopsis:
+                    type: string
+        404:
+          description: Película no encontrada.
