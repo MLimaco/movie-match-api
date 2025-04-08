@@ -15,10 +15,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "search": "node movie.js",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "flatrepo": "flatrepo"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "flatrepo": "^1.2.0"
+  }
 }
