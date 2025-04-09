@@ -85,10 +85,32 @@ function getMoviesByCriteriaController(req, res) {
         res.status(500).send('Error al buscar las películas.');
     }
 }
+
+function getMoviesByGenreController(req, res) {
+    const { genre } = req.query;
+
+    if (!genre) {
+        return res.status(400).json({ error: "El parámetro 'genre' es obligatorio." });
+    }
+
+    try {
+        getAllMovies((movies) => {
+            if (movies.length === 0) {
+                res.status(404).json({ error: "No se encontraron películas para el género solicitado." });
+            } else {
+                res.status(200).json(movies);
+            }
+        }, genre);
+    } catch (error) {
+        res.status(500).json({ error: "Error al filtrar por género." });
+    }
+}
+
 module.exports = {
     getMoviesByCriteriaController,
     getAllMoviesController,
     getRandomMovieController,
     getMovieByIdOrNameController,
     getMovieByTitleController,
+    getMoviesByGenreController, // 👈 nuevo
 };
