@@ -16,85 +16,149 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  title:
-                    type: string
-                  year:
-                    type: string
-                  genre:
-                    type: string
-                  director:
-                    type: string
-                  synopsis:
-                    type: string
+                $ref: '#/components/schemas/Movie'
+        500:
+          $ref: '#/components/responses/InternalError'
+
   /movies:
     get:
-      summary: Obtiene todas las películas o filtra por criterios.
+      summary: Obtiene todas las películas con opciones de filtrado y ordenamiento.
       parameters:
         - in: query
           name: name
           schema:
             type: string
-          description: Nombre parcial de la película.
+          description: Nombre parcial de la película
         - in: query
           name: year
           schema:
             type: string
-          description: Año de la película.
+          description: Año de la película
+        - in: query
+          name: director
+          schema:
+            type: string
+          description: Nombre del director (coincidencia parcial o exacta)
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [year]
+          description: Campo por el cual ordenar (actualmente solo soporta 'year')
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Orden de clasificación (asc o desc, por defecto asc)
       responses:
         200:
-          description: Lista de películas obtenida con éxito.
+          description: Lista de películas obtenida con éxito
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    title:
-                      type: string
-                    year:
-                      type: string
-                    genre:
-                      type: string
-                    director:
-                      type: string
-                    synopsis:
-                      type: string
+                  $ref: '#/components/schemas/Movie'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+  /movies/filter:
+    get:
+      summary: Filtra películas por género
+      parameters:
+        - in: query
+          name: genre
+          required: true
+          schema:
+            type: string
+          description: Género de las películas a buscar
+      responses:
+        200:
+          description: Lista de películas filtradas por género
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+        400:
+          description: Parámetro de género faltante
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
   /movies/{idOrName}:
     get:
-      summary: Busca una película por ID o nombre.
+      summary: Busca una película por ID o nombre
       parameters:
         - in: path
           name: idOrName
           required: true
           schema:
             type: string
-          description: ID o nombre de la película.
+          description: ID o nombre de la película
       responses:
         200:
-          description: Película encontrada con éxito.
+          description: Película encontrada con éxito
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  title:
-                    type: string
-                  year:
-                    type: string
-                  genre:
-                    type: string
-                  director:
-                    type: string
-                  synopsis:
-                    type: string
+                $ref: '#/components/schemas/Movie'
         404:
-          description: Película no encontrada.
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "tt0133093"
+        title:
+          type: string
+          example: "The Matrix"
+        year:
+          type: string
+          example: "1999"
+        genre:
+          type: string
+          example: "Action, Sci-Fi"
+        director:
+          type: string
+          example: "Lana Wachowski and Lilly Wachowski"
+        synopsis:
+          type: string
+          example: "A computer hacker learns about the true nature of reality..."
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "No movies found for the requested director."
+
+  responses:
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    InternalError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
