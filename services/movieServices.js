@@ -154,9 +154,9 @@ function getMoviesSortedByYear(callback, order = 'asc') {
 }
 
 /**
- * Busca películas por múltiples criterios (nombre parcial y/o año).
- * @param {object} criteria - Objeto con los criterios de búsqueda (name, year).
- * @param {function} callback - Función callback que recibe un array de películas filtradas.
+ * Busca películas por múltiples criterios (nombre parcial, año y/o director).
+ * @param {object} criteria - Objeto con los criterios de búsqueda
+ * @param {function} callback - Función callback que recibe un array de películas filtradas
  */
 function getMoviesByCriteria(criteria, callback) {
     const movies = [];
@@ -173,24 +173,32 @@ function getMoviesByCriteria(criteria, callback) {
                 synopsis: row.plot
             };
 
-            // Filtrar por nombre parcial y/o año
+            // Normalizar el nombre del director para la búsqueda
+            const directorQuery = criteria.director ? 
+                decodeURIComponent(criteria.director).toLowerCase().replace(/[-+]/g, ' ') : '';
+            const movieDirector = movie.director.toLowerCase();
+
+            // Filtrar por nombre parcial, año y/o director
             const matchesName = criteria.name
                 ? movie.title.toLowerCase().includes(criteria.name.toLowerCase())
                 : true;
             const matchesYear = criteria.year
                 ? movie.year === criteria.year
                 : true;
+            const matchesDirector = criteria.director
+                ? movieDirector.includes(directorQuery)
+                : true;
 
-            if (matchesName && matchesYear) {
+            if (matchesName && matchesYear && matchesDirector) {
                 movies.push(movie);
             }
         })
         .on('end', () => {
-            callback(movies); // Devuelve las películas filtradas
+            callback(movies);
         })
         .on('error', (err) => {
             console.error('Error al leer el archivo CSV:', err);
-            callback([]); // Devuelve un array vacío en caso de error
+            callback([]);
         });
 }
 

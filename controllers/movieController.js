@@ -70,22 +70,25 @@ const { getMoviesByCriteria } = require('../services/movieServices');
  * Controlador para buscar películas por múltiples criterios (nombre parcial y/o año).
  */
 function getMoviesByCriteriaController(req, res) {
-    const { name, year } = req.query;
+    const { name, year, director } = req.query;
 
     try {
-        getMoviesByCriteria({ name, year }, (movies) => {
+        getMoviesByCriteria({ name, year, director }, (movies) => {
             if (movies.length === 0) {
-                // Si no se encuentran películas, devolver error 404
-                res.status(404).json({ error: "No se encontraron resultados para la búsqueda." });
+                // Mensaje de error específico para búsqueda por director
+                const errorMessage = director 
+                    ? "No movies found for the requested director."
+                    : "No se encontraron resultados para la búsqueda.";
+                
+                res.status(404).json({ error: errorMessage });
             } else {
-                res.status(200).json(movies); // Devuelve las películas encontradas
+                res.status(200).json(movies);
             }
         });
     } catch (error) {
-        res.status(500).send('Error al buscar las películas.');
+        res.status(500).json({ error: 'Error al buscar las películas.' });
     }
 }
-
 function getMoviesByGenreController(req, res) {
     const { genre } = req.query;
 
