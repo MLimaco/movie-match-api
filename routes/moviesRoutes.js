@@ -3,9 +3,9 @@ const {
     getMoviesByCriteriaController,
     getRandomMovieController,
     getMovieByIdOrNameController,
-    getMoviesByGenreController, // 👈 nuevo
+    getMoviesByGenreController,
+    getMoviesSortedByYearController // 👈 Add this
 } = require('../controllers/movieController');
-
 
 // Crear el enrutador
 const router = express.Router();
@@ -13,13 +13,21 @@ const router = express.Router();
 // Ruta para obtener una película aleatoria
 router.get('/', getRandomMovieController);
 
-// Ruta para buscar películas por género
+// 1. Rutas específicas primero
 router.get('/movies/filter', getMoviesByGenreController);
 
-// Ruta para buscar películas por múltiples criterios (nombre parcial y/o año)
-router.get('/movies', getMoviesByCriteriaController);
+// 2. Rutas con query parameters
+router.get('/movies', (req, res, next) => {
+    const { sort, order } = req.query;
+    
+    if (sort === 'year') {
+        getMoviesSortedByYearController(req, res);
+    } else {
+        getMoviesByCriteriaController(req, res);
+    }
+});
 
-// Ruta para buscar una película por ID o nombre
+// 3. Rutas con parámetros dinámicos al final
 router.get('/movies/:idOrName', getMovieByIdOrNameController);
 
 module.exports = router;

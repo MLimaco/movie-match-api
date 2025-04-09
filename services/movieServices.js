@@ -118,6 +118,42 @@ function getAllMovies(callback, genre = null) {
 }
 
 /**
+ * Obtiene todas las películas ordenadas por año
+ * @param {function} callback - Función callback que recibe un array de películas
+ * @param {string} order - Orden de clasificación ('asc' o 'desc')
+ */
+function getMoviesSortedByYear(callback, order = 'asc') {
+    const movies = [];
+
+    fs.createReadStream('data/movies.csv')
+        .pipe(csv())
+        .on('data', (row) => {
+            movies.push({
+                id: row.id,
+                title: row.title,
+                year: row.year,
+                genre: row.genre,
+                director: row.director,
+                synopsis: row.plot
+            });
+        })
+        .on('end', () => {
+            // Ordenar películas por año
+            const sortedMovies = movies.sort((a, b) => {
+                if (order === 'desc') {
+                    return parseInt(b.year) - parseInt(a.year);
+                }
+                return parseInt(a.year) - parseInt(b.year);
+            });
+            callback(sortedMovies);
+        })
+        .on('error', (err) => {
+            console.error('Error al leer el archivo CSV:', err);
+            callback([]);
+        });
+}
+
+/**
  * Busca películas por múltiples criterios (nombre parcial y/o año).
  * @param {object} criteria - Objeto con los criterios de búsqueda (name, year).
  * @param {function} callback - Función callback que recibe un array de películas filtradas.
@@ -158,4 +194,4 @@ function getMoviesByCriteria(criteria, callback) {
         });
 }
 
-module.exports = { getMoviesByCriteria, getAllMovies, getRandomMovie, getMovieByIdOrName, getMovieByTitle };
+module.exports = { getMoviesByCriteria, getAllMovies, getRandomMovie, getMovieByIdOrName, getMovieByTitle, getMoviesSortedByYear };

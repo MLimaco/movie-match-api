@@ -106,11 +106,39 @@ function getMoviesByGenreController(req, res) {
     }
 }
 
+const { getMoviesSortedByYear } = require('../services/movieServices');
+
+function getMoviesSortedByYearController(req, res) {
+    const { sort, order } = req.query;
+
+    // Solo procesar si sort=year
+    if (sort !== 'year') {
+        return getAllMoviesController(req, res);
+    }
+
+    // Validar el parámetro order
+    const validOrder = order === 'desc' ? 'desc' : 'asc';
+
+    try {
+        getMoviesSortedByYear((movies) => {
+            if (movies.length === 0) {
+                res.status(404).json({ error: "No se encontraron películas." });
+            } else {
+                res.status(200).json(movies);
+            }
+        }, validOrder);
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener las películas ordenadas." });
+    }
+}
+
+
 module.exports = {
     getMoviesByCriteriaController,
     getAllMoviesController,
     getRandomMovieController,
     getMovieByIdOrNameController,
     getMovieByTitleController,
-    getMoviesByGenreController, // 👈 nuevo
+    getMoviesByGenreController, 
+    getMoviesSortedByYearController, // 👈 nuevo
 };
